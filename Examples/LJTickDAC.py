@@ -6,8 +6,8 @@ LabJack Python modules to set the value of DACA and DACB in a LJ-TickDAC
 import time
 import sys
 from threading import Thread
-from Tkinter import *
-import tkMessageBox
+from tkinter import *
+import tkinter.messagebox
 
 # Attempt to load the labjack driver
 try:
@@ -16,7 +16,7 @@ try:
     from u6 import *
     from ue9 import *
 except:
-    tkMessageBox.showerror("Driver error", "The driver could not be imported.\nIf you are on windows, please install the UD driver from www.labjack.com")
+    tkinter.messagebox.showerror("Driver error", "The driver could not be imported.\nIf you are on windows, please install the UD driver from www.labjack.com")
     sys.exit()
 
 def toDouble(buffer):
@@ -197,7 +197,7 @@ class LJTickDAC(Tk):
         Name:showErrorWindow(title, info)
         Desc:Shows an error popup for last exception encountered
         """
-        tkMessageBox.showerror(title, str(info))
+        tkinter.messagebox.showerror(title, str(info))
 
     def updateSettings(self, deviceType, ainPin, dacPin):
         """

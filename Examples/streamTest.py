@@ -57,10 +57,10 @@ MAX_REQUESTS = 75
 
 
 try:
-    print "start stream",
+    print("start stream", end=' ')
     d.streamStart()
     start = datetime.now()
-    print start
+    print(start)
     
     missed = 0
     dataCount = 0
@@ -73,18 +73,18 @@ try:
                 break
             
             if r['errors'] != 0:
-                print "Error: %s ; " % r['errors'], datetime.now()
+                print("Error: %s ; " % r['errors'], datetime.now())
 
             if r['numPackets'] != d.packetsPerRequest:
-                print "----- UNDERFLOW : %s : " % r['numPackets'], datetime.now()
+                print("----- UNDERFLOW : %s : " % r['numPackets'], datetime.now())
 
             if r['missed'] != 0:
                 missed += r['missed']
-                print "+++ Missed ", r['missed']
+                print("+++ Missed ", r['missed'])
 
             # Comment out these prints and do something with r
-            print "Average of" , len(r['AIN0']), "AIN0," , len(r['AIN1']) , "AIN1 reading(s):", 
-            print sum(r['AIN0'])/len(r['AIN0']) , "," , sum(r['AIN1'])/len(r['AIN1'])
+            print("Average of" , len(r['AIN0']), "AIN0," , len(r['AIN1']) , "AIN1 reading(s):", end=' ') 
+            print(sum(r['AIN0'])/len(r['AIN0']) , "," , sum(r['AIN1'])/len(r['AIN1']))
 
             dataCount += 1
             packetCount += r['numPackets']
@@ -92,24 +92,24 @@ try:
             # Got no data back from our read.
             # This only happens if your stream isn't faster than the 
             # the USB read timeout, ~1 sec.
-            print "No data", datetime.now()
+            print("No data", datetime.now())
 except:
-    print "".join(i for i in traceback.format_exc())
+    print("".join(i for i in traceback.format_exc()))
 finally:
     stop = datetime.now()
     d.streamStop()
-    print "stream stopped."
+    print("stream stopped.")
     d.close()
 
     sampleTotal = packetCount * d.streamSamplesPerPacket
 
     scanTotal = sampleTotal / 2 #sampleTotal / NumChannels
-    print "%s requests with %s packets per request with %s samples per packet = %s samples total." % ( dataCount, (float(packetCount) / dataCount), d.streamSamplesPerPacket, sampleTotal )
-    print "%s samples were lost due to errors." % missed
+    print("%s requests with %s packets per request with %s samples per packet = %s samples total." % ( dataCount, (float(packetCount) / dataCount), d.streamSamplesPerPacket, sampleTotal ))
+    print("%s samples were lost due to errors." % missed)
     sampleTotal -= missed
-    print "Adjusted number of samples = %s" % sampleTotal
+    print("Adjusted number of samples = %s" % sampleTotal)
 
     runTime = (stop-start).seconds + float((stop-start).microseconds)/1000000
-    print "The experiment took %s seconds." % runTime
-    print "Scan Rate : %s scans / %s seconds = %s Hz" % ( scanTotal, runTime, float(scanTotal)/runTime )
-    print "Sample Rate : %s samples / %s seconds = %s Hz" % ( sampleTotal, runTime, float(sampleTotal)/runTime )
+    print("The experiment took %s seconds." % runTime)
+    print("Scan Rate : %s scans / %s seconds = %s Hz" % ( scanTotal, runTime, float(scanTotal)/runTime ))
+    print("Sample Rate : %s samples / %s seconds = %s Hz" % ( sampleTotal, runTime, float(sampleTotal)/runTime ))

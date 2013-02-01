@@ -5,9 +5,9 @@ LabJack Python modules. For an example of using the Labjack Python module direct
 look at the source code of ei1050.py
 """
 import sys
-from Queue import Queue
-from Tkinter import *
-import tkMessageBox
+from queue import Queue
+from tkinter import *
+import tkinter.messagebox
 
 try:
     import LabJackPython
@@ -16,7 +16,7 @@ try:
     from ue9 import *
     from ei1050 import *
 except:
-    tkMessageBox.showerror("Driver error", "The driver could not be imported.\nIf you are on windows, please install the UD driver from www.labjack.com")
+    tkinter.messagebox.showerror("Driver error", "The driver could not be imported.\nIf you are on windows, please install the UD driver from www.labjack.com")
 
 class MainWindow:
     """
@@ -139,7 +139,7 @@ class MainWindow:
             self.window.after(1000,self.updateLabels)
 
     def showInstructions(self):
-        tkMessageBox.showinfo("Instructions", '''U3 SHT configured with pins as follows:
+        tkinter.messagebox.showinfo("Instructions", '''U3 SHT configured with pins as follows:
 Green(Data) -- FIO4             
 White(Clock) -- FIO5             
 Black(GND) -- GND             
@@ -160,7 +160,7 @@ Brown(Enable) -- FIO3''')
                 self.thread.join()
             if self.device != None:
                 self.device.close()
-        except: print "error terminating app"
+        except: print("error terminating app")
         finally:
             self.window.destroy()
             
@@ -169,6 +169,6 @@ def showErrorWindow(title, info):
         Name:showErrorWindow()
         Desc:Shows an error popup for last exception encountered
         """
-        tkMessageBox.showerror(title, str(info) + "\n\nPlease check your wiring. If you need help, click instructions.")
+        tkinter.messagebox.showerror(title, str(info) + "\n\nPlease check your wiring. If you need help, click instructions.")
         
 MainWindow()
