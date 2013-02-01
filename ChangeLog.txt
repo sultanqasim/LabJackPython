@@ -209,3 +209,5 @@ Version History
     - Updated the UD driver (v3.25) constants in the LabJackPython module.
     - Fixed configU3 to set TimerClockConfig, TimerClockDivisor and
       CompatibilityOptions settings properly.
+- February 1, 2013
+    - Ported to Python 3.x
