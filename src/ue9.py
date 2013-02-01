@@ -154,14 +154,14 @@ class UE9(Device):
         if PortA != None:
             command[6] |= (1 << 5)
             t = struct.pack("<H", PortA)
-            command[22] = ord(t[0])
-            command[23] = ord(t[1])
+            command[22] = t[0]
+            command[23] = t[1]
         
         if PortB != None:
             command[6] |= (1 << 5)
             t = struct.pack("<H", PortB)
-            command[24] = ord(t[0])
-            command[25] = ord(t[1])
+            command[24] = t[0]
+            command[25] = t[1]
 
         if DHCPEnabled != None:
             command[6] |= (1 << 6)
@@ -804,7 +804,7 @@ class UE9(Device):
             for i in range(0, 10):
                 res = self.read(192, stream = True)
                 if len(res) == 192:
-                    if all([ ord(b) == 0 for b in res ]):
+                    if all([ b == 0 for b in res ]):
                         #stream data cleared (Windows)
                         break
                 else:
@@ -927,8 +927,8 @@ class UE9(Device):
         if EnableScanPulseOutput:
             command[9] |= 0x80
         t = struct.pack("<H", ScanInterval)
-        command[10] = ord(t[0])
-        command[11] = ord(t[1])
+        command[10] = t[0]
+        command[11] = t[1]
         for i in range(NumChannels):
             command[12+(i*2)] = ChannelNumbers[i]
             command[13+(i*2)] = ChannelOptions[i]
@@ -1024,8 +1024,8 @@ class UE9(Device):
             while i < numPackets:
                 offset = (i*numBytes)
                 #Check for empty data
-                if ord(result[1+offset]) == 0:
-                    if all([ ord(b) == 0 for b in result[offset:(offset+numBytes)]]):
+                if result[1+offset] == 0:
+                    if all([ b == 0 for b in result[offset:(offset+numBytes)]]):
                         if i+1 >= numPackets:
                             result = result[0:offset]
                         else:
@@ -1033,7 +1033,7 @@ class UE9(Device):
                         numPackets = numPackets - 1
                         continue
                 
-                e = ord(result[11+offset])
+                e = result[11+offset]
                 if e != 0:
                     errors += 1
                     if self.debug: print(e)
@@ -1070,14 +1070,14 @@ class UE9(Device):
                             #Return packets in multiples of 4 like over USB
                             numPackets = (packetsInBuffer // 4) * 4
                             result = retResult[:(numBytes * numPackets)]
-                            firstPacket = ord(result[10])
+                            firstPacket = result[10]
                             
                             #Adjust buffered data
                             resultBuffer = resultBuffer[(numBytes * numPackets):]
                     else:
                         continue
             
-            firstPacket = ord(result[10])
+            firstPacket = result[10]
             
             returnDict = dict(numPackets = numPackets, result = result, errors = errors, missed = missed, firstPacket = firstPacket)
             if convert:
@@ -1124,11 +1124,11 @@ class UE9(Device):
                     j = 0
 
                 if self.streamChannelNumbers[j] in (193, 194):
-                    value = struct.unpack('<BB', sample )
+                    value = struct.unpack('<BB', bytes(sample, 'UTF-16')[0:2] )
                 elif self.streamChannelNumbers[j] >= 200:
-                    value = struct.unpack('<H', sample )[0]
+                    value = struct.unpack('<H', bytes(sample, 'UTF-16')[0:2] )[0]
                 else:
-                    value = struct.unpack('<H', sample )[0]
+                    value = struct.unpack('<H', bytes(sample, 'UTF-16')[0:2] )[0]
                     gain = self.streamChannelOptions[j] & 0x0F
                     value = self.binaryToCalibratedAnalogVoltage(value, gain)
 
@@ -1175,8 +1175,8 @@ class UE9(Device):
             command[7] |= (1 << 0)
         
         t = struct.pack("<H", TimeoutPeriod)
-        command[8] = ord(t[0])
-        command[9] = ord(t[1])
+        command[8] = t[0]
+        command[9] = t[1]
         
         command[10] = DIOConfigA
         command[11] = DIOConfigB
@@ -1302,8 +1302,8 @@ class UE9(Device):
         
         BaudFactor = (2**16) - 48000000/(2 * DesiredBaud)
         t = struct.pack("<H", BaudFactor)
-        command[8] = ord(t[0])
-        command[9] = ord(t[1])
+        command[8] = t[0]
+        command[9] = t[1]
         
         result = self._writeRead(command, 10, [0xF8, 0x02, 0x14])
         

@@ -227,10 +227,10 @@ class Device(object):
                 dataWords = len(writeBuffer)
                 writeBuffer = [0, 0xF8, 0, 0x07, 0, 0] + writeBuffer #modbus low-level function
                 if dataWords % 2 != 0:
-                    dataWords = (dataWords+1)/2
+                    dataWords = (dataWords+1)//2
                     writeBuffer.append(0)
                 else:
-                    dataWords = dataWords/2
+                    dataWords = dataWords//2
                 writeBuffer[2] = dataWords
                 setChecksum(writeBuffer)
             elif modbus is True and self.modbusPrependZeros:
@@ -1259,9 +1259,9 @@ def _openLabJackUsingLJSocket(deviceType, firstFound, pAddress, LJSocket, handle
     if LJSocket is not '':
         ip, port = LJSocket.split(":")
         port = int(port)
-        handle = LJSocketHandle(ip, port, deviceType, firstFound, pAddress)
+        handle = LJSocketHandle(ip, port, deviceType, firstFound, bytes(pAddress, 'ASCII'))
     else:
-        handle = LJSocketHandle('localhost', 6000, deviceType, firstFound, pAddress)
+        handle = LJSocketHandle('localhost', 6000, deviceType, firstFound, bytes(pAddress, 'ASCII'))
       
     return handle
 
@@ -1273,7 +1273,7 @@ def _openLabJackUsingUDDriver(deviceType, connectionType, firstFound, pAddress, 
     handle = ctypes.c_long()
     pAddress = str(pAddress)
     ec = staticLib.OpenLabJack(deviceType, connectionType, 
-                                pAddress, firstFound, ctypes.byref(handle))
+                                bytes(pAddress, 'ASCII'), firstFound, ctypes.byref(handle))
 
     if ec != 0: raise LabJackException(ec)
     devHandle = handle.value
