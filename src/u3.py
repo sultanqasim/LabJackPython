@@ -725,7 +725,7 @@ class U3(Device):
         sendBuffer, readLen = self._buildBuffer(sendBuffer, readLen, commandlist)
         if len(sendBuffer) % 2:
             sendBuffer += [0]
-        sendBuffer[2] = len(sendBuffer) / 2 - 3
+        sendBuffer[2] = len(sendBuffer) // 2 - 3
         
         if readLen % 2:
             readLen += 1
@@ -982,10 +982,10 @@ class U3(Device):
                 if ScanFrequency < 25:
                     SamplesPerPacket = ScanFrequency
                 DivideClockBy256 = True
-                ScanInterval = 15625/ScanFrequency
+                ScanInterval = 15625//ScanFrequency
             else:
                 DivideClockBy256 = False
-                ScanInterval = 4000000/ScanFrequency
+                ScanInterval = 4000000//ScanFrequency
         
         # Force Scan Interval into correct range
         ScanInterval = min( ScanInterval, 65535 )
@@ -1015,8 +1015,8 @@ class U3(Device):
         command[9] |= ( Resolution & 3 )
         
         t = struct.pack("<H", ScanInterval)
-        command[10] = ord(t[0])
-        command[11] = ord(t[1])
+        command[10] = t[0]
+        command[11] = t[1]
         
         for i in range(NumChannels):
             command[12+(i*2)] = PChannels[i]
@@ -1073,17 +1073,17 @@ class U3(Device):
                     self.streamPacketOffset = 0
                 
                 if self.streamChannelNumbers[self.streamPacketOffset] in (193, 194):
-                    value = struct.unpack('<BB', sample )
+                    value = struct.unpack('<BB', bytes(sample, 'UTF-16')[0:2] )
                 elif self.streamChannelNumbers[self.streamPacketOffset] >= 200:
-                    value = struct.unpack('<H', sample )[0]
+                    value = struct.unpack('<H', bytes(sample, 'UTF-16')[0:2] )[0]
                 else:  
                     if self.streamNegChannels[self.streamPacketOffset] == 31:
                         # do unsigned
-                        value = struct.unpack('<H', sample )[0]
+                        value = struct.unpack('<H', bytes(sample, 'UTF-16')[0:2] )[0]
                         singleEnded = True
                     else:
                         # do signed
-                        value = struct.unpack('<H', sample )[0]
+                        value = struct.unpack('<H', bytes(sample, 'UTF-16')[0:2] )[0]
                         singleEnded = False
                     
                     lvChannel = True
@@ -1144,8 +1144,8 @@ class U3(Device):
             command[7] |= 1 << 4
         
         t = struct.pack("<H", TimeoutPeriod)
-        command[8] = ord(t[0])
-        command[9] = ord(t[1])
+        command[8] = t[0]
+        command[9] = t[1]
         
         command[10] = (( DIOState & 1 ) << 7) + ( DIONumber & 15)
         
@@ -1215,7 +1215,7 @@ class U3(Device):
         
         #command[0] = Checksum8
         command[1] = 0xF8
-        command[2] = 4 + (numSPIBytes/2)
+        command[2] = 4 + (numSPIBytes//2)
         command[3] = 0x3A
         #command[4] = Checksum16 (LSB)
         #command[5] = Checksum16 (MSB)
@@ -1239,7 +1239,7 @@ class U3(Device):
         
         command[14:] = SPIBytes
         
-        result = self._writeRead(command, 8+numSPIBytes, [ 0xF8, 1+(numSPIBytes/2), 0x3A ])
+        result = self._writeRead(command, 8+numSPIBytes, [ 0xF8, 1+(numSPIBytes//2), 0x3A ])
         
         if result[6] != 0:
             raise LowlevelErrorException(result[6], "The spi command returned an error:\n    %s" % lowlevelErrorToString(result[6]))
@@ -1289,12 +1289,12 @@ class U3(Device):
         
         #command[8] = Reserved
         if olderHardware:
-            command[9] = (2**8) - self.timerClockBase/DesiredBaud
+            command[9] = (2**8) - self.timerClockBase//DesiredBaud
         else:
-            BaudFactor = (2**16) - 48000000/(2 * DesiredBaud)
+            BaudFactor = (2**16) - 48000000//(2 * DesiredBaud)
             t = struct.pack("<H", BaudFactor)
-            command[8] = ord(t[0])
-            command[9] = ord(t[1])
+            command[8] = t[0]
+            command[9] = t[1]
         
         if olderHardware:
             result = self._writeRead(command, 10, [0xF8, 0x02, 0x14])
@@ -1354,7 +1354,7 @@ class U3(Device):
         
         #command[0] = Checksum8
         command[1] = 0xF8
-        command[2] = 1 + ( numBytes/2 )
+        command[2] = 1 + ( numBytes//2 )
         command[3] = 0x15
         #command[4] = Checksum16 (LSB)
         #command[5] = Checksum16 (MSB)
@@ -1441,7 +1441,7 @@ class U3(Device):
         
         #command[0] = Checksum8
         command[1] = 0xF8
-        command[2] = 4 + (numBytes/2)
+        command[2] = 4 + (numBytes//2)
         command[3] = 0x3B
         #command[4] = Checksum16 (LSB)
         #command[5] = Checksum16 (MSB)
@@ -1470,7 +1470,7 @@ class U3(Device):
             NumI2CBytesToReceive = NumI2CBytesToReceive+1
             oddResponse = True
         
-        result = self._writeRead(command, 12+NumI2CBytesToReceive, [0xF8, (3+(NumI2CBytesToReceive/2)), 0x3B])
+        result = self._writeRead(command, 12+NumI2CBytesToReceive, [0xF8, (3+(NumI2CBytesToReceive//2)), 0x3B])
                 
         if len(result) > 12:
             if oddResponse:
