@@ -982,10 +982,10 @@ class U3(Device):
                 if ScanFrequency < 25:
                     SamplesPerPacket = ScanFrequency
                 DivideClockBy256 = True
-                ScanInterval = 15625//ScanFrequency
+                ScanInterval = 15625/ScanFrequency
             else:
                 DivideClockBy256 = False
-                ScanInterval = 4000000//ScanFrequency
+                ScanInterval = 4000000/ScanFrequency
         
         # Force Scan Interval into correct range
         ScanInterval = min( ScanInterval, 65535 )

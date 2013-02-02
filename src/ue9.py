@@ -1238,7 +1238,7 @@ class UE9(Device):
         
         #command[0] = Checksum8
         command[1] = 0xF8
-        command[2] = 4 + (numSPIBytes/2)
+        command[2] = 4 + (numSPIBytes//2)
         command[3] = 0x3A
         #command[4] = Checksum16 (LSB)
         #command[5] = Checksum16 (MSB)
@@ -1262,7 +1262,7 @@ class UE9(Device):
         
         command[14:] = SPIBytes
         
-        result = self._writeRead(command, 8+numSPIBytes, [ 0xF8, 1+(numSPIBytes/2), 0x3A ])
+        result = self._writeRead(command, 8+numSPIBytes, [ 0xF8, 1+(numSPIBytes//2), 0x3A ])
         
         if result[6] != 0:
             raise LowlevelErrorException(result[6], "The spi command returned an error:\n    %s" % lowlevelErrorToString(result[6]))
@@ -1300,7 +1300,7 @@ class UE9(Device):
         if UARTEnable:
             command[7] |= ( 1 << 6 )
         
-        BaudFactor = (2**16) - 48000000/(2 * DesiredBaud)
+        BaudFactor = (2**16) - 48000000//(2 * DesiredBaud)
         t = struct.pack("<H", BaudFactor)
         command[8] = t[0]
         command[9] = t[1]
@@ -1351,7 +1351,7 @@ class UE9(Device):
         
         #command[0] = Checksum8
         command[1] = 0xF8
-        command[2] = 1 + ( numBytes/2 )
+        command[2] = 1 + ( numBytes//2 )
         command[3] = 0x15
         #command[4] = Checksum16 (LSB)
         #command[5] = Checksum16 (MSB)
@@ -1424,7 +1424,7 @@ class UE9(Device):
         
         #command[0] = Checksum8
         command[1] = 0xF8
-        command[2] = 4 + (numBytes/2)
+        command[2] = 4 + (numBytes//2)
         command[3] = 0x3B
         #command[4] = Checksum16 (LSB)
         #command[5] = Checksum16 (MSB)
@@ -1453,7 +1453,7 @@ class UE9(Device):
             NumI2CBytesToReceive = NumI2CBytesToReceive+1
             oddResponse = True
         
-        result = self._writeRead(command, 12+NumI2CBytesToReceive, [0xF8, (3+(NumI2CBytesToReceive/2)), 0x3B])
+        result = self._writeRead(command, 12+NumI2CBytesToReceive, [0xF8, (3+(NumI2CBytesToReceive//2)), 0x3B])
                 
         if len(result) > 12:
             if oddResponse:

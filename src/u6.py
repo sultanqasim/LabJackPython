@@ -639,8 +639,8 @@ class U6(Device):
         if DivideClockBy256:
             command[11] |= 1 << 1
         t = struct.pack("<H", ScanInterval)
-        command[12] = ord(t[0])
-        command[13] = ord(t[1])
+        command[12] = t[0]
+        command[13] = t[1]
         for i in range(NumChannels):
             command[14+(i*2)] = ChannelNumbers[i]
             command[15+(i*2)] = ChannelOptions[i]
@@ -695,16 +695,16 @@ class U6(Device):
                     j = 0
                 
                 if self.streamChannelNumbers[j] in (193, 194):
-                    value = struct.unpack('<BB', sample )
+                    value = struct.unpack('<BB', bytes(sample, 'UTF-16')[0:2] )
                 elif self.streamChannelNumbers[j] >= 200:
-                    value = struct.unpack('<H', sample )[0]
+                    value = struct.unpack('<H', bytes(sample, 'UTF-16')[0:2] )[0]
                 else:
                     if (self.streamChannelOptions[j] >> 7) == 1:
                         # do signed
-                        value = struct.unpack('<H', sample )[0]
+                        value = struct.unpack('<H', bytes(sample, 'UTF-16')[0:2] )[0]
                     else:
                         # do unsigned
-                        value = struct.unpack('<H', sample )[0]
+                        value = struct.unpack('<H', bytes(sample, 'UTF-16')[0:2] )[0]
                     
                     gainIndex = (self.streamChannelOptions[j] >> 4) & 0x3
                     value = self.binaryToCalibratedAnalogVoltage(gainIndex, value, is16Bits = True, resolutionIndex = 0)
@@ -746,8 +746,8 @@ class U6(Device):
             command[7] |= (1 << 4)
         
         t = struct.pack("<H", TimeoutPeriod)
-        command[8] = ord(t[0])
-        command[9] = ord(t[1])
+        command[8] = t[0]
+        command[9] = t[1]
         command[10] = ((DIOState & 1 ) << 7)
         command[10] |= (DIONumber & 0xf)
         
@@ -821,7 +821,7 @@ class U6(Device):
         
         #command[0] = Checksum8
         command[1] = 0xF8
-        command[2] = 4 + (numSPIBytes/2)
+        command[2] = 4 + (numSPIBytes//2)
         command[3] = 0x3A
         #command[4] = Checksum16 (LSB)
         #command[5] = Checksum16 (MSB)
@@ -845,7 +845,7 @@ class U6(Device):
         
         command[14:] = SPIBytes
         
-        result = self._writeRead(command, 8+numSPIBytes, [ 0xF8, 1+(numSPIBytes/2), 0x3A ])
+        result = self._writeRead(command, 8+numSPIBytes, [ 0xF8, 1+(numSPIBytes//2), 0x3A ])
         
         if result[6] != 0:
             raise LowlevelErrorException(result[6], "The spi command returned an error:\n    %s" % lowlevelErrorToString(result[6]))
@@ -884,11 +884,11 @@ class U6(Device):
             command[7] |= (1 << 6)
         
         if DesiredBaud != None:
-            BaudFactor = (2**16) - 48000000/(2 * DesiredBaud)   
+            BaudFactor = (2**16) - 48000000//(2 * DesiredBaud)   
         
         t = struct.pack("<H", BaudFactor)
-        command[8] = ord(t[0])
-        command[9] = ord(t[1])
+        command[8] = t[0]
+        command[9] = t[1]
         
         results = self._writeRead(command, 10, [0xF8, 0x02, 0x14])
             
@@ -914,7 +914,7 @@ class U6(Device):
         command = [ 0 ] * (8+numBytes)
         #command[0] = Checksum8
         command[1] = 0xF8
-        command[2] = 1 + (numBytes/2)
+        command[2] = 1 + (numBytes//2)
         command[3] = 0x15
         #command[4] = Checksum16 (LSB)
         #command[5] = Checksum16 (MSB)
@@ -974,7 +974,7 @@ class U6(Device):
         command = [ 0 ] * (14+numBytes)
         #command[0] = Checksum8
         command[1] = 0xF8
-        command[2] = 4 + (numBytes/2)
+        command[2] = 4 + (numBytes//2)
         command[3] = 0x3B
         #command[4] = Checksum16 (LSB)
         #command[5] = Checksum16 (MSB)
@@ -1005,7 +1005,7 @@ class U6(Device):
             NumI2CBytesToReceive = NumI2CBytesToReceive+1
             oddResponse = True
         
-        result = self._writeRead(command, (12+NumI2CBytesToReceive), [0xF8, (3+(NumI2CBytesToReceive/2)), 0x3B])
+        result = self._writeRead(command, (12+NumI2CBytesToReceive), [0xF8, (3+(NumI2CBytesToReceive//2)), 0x3B])
         
         if NumI2CBytesToReceive != 0:
             return { 'AckArray' : result[8:12], 'I2CBytes' : result[12:] }
@@ -2423,7 +2423,7 @@ class Counter(FeedbackCommand):
     readLen = 4
 
     def handle(self, input):
-        inStr = ''.join([chr(x) for x in input])
+        inStr = bytes().join([bytes([x]) for x in input])
         return struct.unpack('<I', inStr )[0]
 
 class Counter0(Counter):
@@ -2511,5 +2511,5 @@ class DSP(FeedbackCommand):
     readLen = 4
 
     def handle(self, input):
-        inStr = ''.join([chr(x) for x in input])
+        inStr = bytes().join([bytes([x]) for x in input])
         return struct.unpack('<I', inStr )[0]
