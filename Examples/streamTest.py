@@ -23,7 +23,7 @@ MAX_REQUESTS = 75
 ## Set the FIO0 to Analog
 #d.configIO(FIOAnalog = 3)
 #
-#print "configuring U3 stream"
+#print("configuring U3 stream")
 #d.streamConfig( NumChannels = 2, PChannels = [ 0, 1 ], NChannels = [ 31, 31 ], Resolution = 3, ScanFrequency = 5000 )
 
 ################################################################################
@@ -36,7 +36,7 @@ MAX_REQUESTS = 75
 ## For applying the proper calibration to readings.
 #d.getCalibrationData()
 #
-#print "configuring U6 stream"
+#print("configuring U6 stream")
 #
 #d.streamConfig( NumChannels = 2, ChannelNumbers = [ 0, 1 ], ChannelOptions = [ 0, 0 ], SettlingFactor = 1, ResolutionIndex = 1, ScanFrequency = 5000 )
 
@@ -51,7 +51,7 @@ MAX_REQUESTS = 75
 ## For applying the proper calibration to readings.
 #d.getCalibrationData()
 #
-#print "configuring UE9 stream"
+#print("configuring UE9 stream")
 #
 #d.streamConfig( NumChannels = 2, ChannelNumbers = [ 0, 1 ], ChannelOptions = [ 0, 0 ], SettlingTime = 0, Resolution = 12, ScanFrequency = 5000 )
 

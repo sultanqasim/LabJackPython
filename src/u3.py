@@ -1073,17 +1073,17 @@ class U3(Device):
                     self.streamPacketOffset = 0
                 
                 if self.streamChannelNumbers[self.streamPacketOffset] in (193, 194):
-                    value = struct.unpack('<BB', bytes(sample, 'UTF-16')[0:2] )
+                    value = struct.unpack('<BB', sample )
                 elif self.streamChannelNumbers[self.streamPacketOffset] >= 200:
-                    value = struct.unpack('<H', bytes(sample, 'UTF-16')[0:2] )[0]
+                    value = struct.unpack('<H', sample )[0]
                 else:  
                     if self.streamNegChannels[self.streamPacketOffset] == 31:
                         # do unsigned
-                        value = struct.unpack('<H', bytes(sample, 'UTF-16')[0:2] )[0]
+                        value = struct.unpack('<H', sample )[0]
                         singleEnded = True
                     else:
                         # do signed
-                        value = struct.unpack('<H', bytes(sample, 'UTF-16')[0:2] )[0]
+                        value = struct.unpack('<H', sample )[0]
                         singleEnded = False
                     
                     lvChannel = True

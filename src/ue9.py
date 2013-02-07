@@ -1124,11 +1124,11 @@ class UE9(Device):
                     j = 0
 
                 if self.streamChannelNumbers[j] in (193, 194):
-                    value = struct.unpack('<BB', bytes(sample, 'UTF-16')[0:2] )
+                    value = struct.unpack('<BB', sample )
                 elif self.streamChannelNumbers[j] >= 200:
-                    value = struct.unpack('<H', bytes(sample, 'UTF-16')[0:2] )[0]
+                    value = struct.unpack('<H', sample )[0]
                 else:
-                    value = struct.unpack('<H', bytes(sample, 'UTF-16')[0:2] )[0]
+                    value = struct.unpack('<H', sample )[0]
                     gain = self.streamChannelOptions[j] & 0x0F
                     value = self.binaryToCalibratedAnalogVoltage(value, gain)
 

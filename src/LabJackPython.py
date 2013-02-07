@@ -6,8 +6,6 @@ This python wrapper is intended to make working with your LabJack device easy. T
 
 A typical user should start with their device's module, such as u3.py.
 """
-# We use the 'with' keyword to manage the thread-safe device lock. It's built-in on 2.6; 2.5 requires an import.
-
 
 import collections
 import ctypes
@@ -720,7 +718,7 @@ class Device(object):
         HEADER_SIZE = 12
         FOOTER_SIZE = 2
         BYTES_PER_PACKET = 2
-        l = str(packet)
+        l = bytes(packet)
         l = l[HEADER_SIZE:]
         l = l[:-FOOTER_SIZE]
         while len(l) > 0:
