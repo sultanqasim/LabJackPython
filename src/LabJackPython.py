@@ -1332,9 +1332,9 @@ def _openUE9OverEthernet(firstFound, pAddress, devNumber):
     sndDataBuff[1] = 0x78
     sndDataBuff[3] = 0xa9
 
-    outBuff = ""
+    outBuff = b''
     for item in sndDataBuff:
-        outBuff += chr(item)
+        outBuff += bytes([item])
     s.sendto(outBuff, ("255.255.255.255", 52362))
 
     try:
