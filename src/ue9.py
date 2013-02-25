@@ -1009,7 +1009,7 @@ class UE9(Device):
         missed = 0 #Not available on UE9
         errors = 0
         newTimeLoop = True #Ethernet only
-        resultBuffer = "" #Ethernet only
+        resultBuffer = b'' #Ethernet only
         numBytes = self.streamPacketSize
         
         while True:
