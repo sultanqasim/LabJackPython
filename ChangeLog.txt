@@ -211,3 +211,6 @@ Version History
       CompatibilityOptions settings properly.
 - February 1, 2013
     - Ported to Python 3.x
+- February 25, 2013
+    - Fixed streaming interface
+    - Fixed ethernet communication with UE9
