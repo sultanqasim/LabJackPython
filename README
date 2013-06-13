@@ -1,6 +1,6 @@
 LabJackPython: Cross-platform (Windows, Linux, Mac OS X) Python module and
 examples for LabJack devices.
-02/25/2013
+06/13/2013
 skhan@ndigital.com
 
 This is a fork of the official LabJackPython that adds support for Python 3.x. Python 3.0 or higher is required to use this version of LabJackPython. For Python 2.x, use the official LabJackPython from LabJack.
